@@ -3,18 +3,27 @@ class BooksController < ApplicationController
 
   before_action :set_book, only: [:show, :edit, :update, :destroy, :upvote, :downvote]
   def upvote
-    @book = Book.find(params[:id])
-    @book.liked_by current_user
-
-    # @book.upvote_from current_user
-    redirect_to books_path
+      if current_user.voted_for? @book
+        @book = Book.find(params[:id])
+        @book.unliked_by current_user
+      else
+        @book = Book.find(params[:id])
+        @book.liked_by current_user
+      end
+      redirect_to books_path
+    # redirect_to :back
   end
 
   def downvote
-    @book = Book.find(params[:id])
-    @book.downvote_from current_user
-    # @book.downvote_from current_user
+    if current_user.voted_for? @book
+      @book = Book.find(params[:id])
+      @book.undisliked_by current_user
+    else
+      @book = Book.find(params[:id])
+      @book.downvote_from current_user
+    end
     redirect_to books_path
+    # redirect_to :back
   end
 
   # GET /books
