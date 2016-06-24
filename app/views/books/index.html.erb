@@ -21,5 +21,15 @@
         <% end %>
 
       </div>
+
+      <div style="margin: 10px">
+        <%= current_user.find_voted_items%> <br><br>
+        <%= current_user.find_up_voted_items %> <br><br>
+        <%= current_user.find_down_voted_items %> <br><br>
+
+        <% current_user.find_voted_items.each do |voted|%>
+          <%= voted.title%>
+        <% end %>
+      </div>
     </div>
-<% end %>
+<% end  %>

@@ -1,6 +1,10 @@
 class DeviseCreateUsers < ActiveRecord::Migration
   def change
     create_table(:users) do |t|
+      ## To voting system
+      t.string :like_array, array: true, default: []
+      t.string :hate_array, array: true, default: []
+
       ## Database authenticatable
       t.string :email,              null: false, default: ""
       t.string :encrypted_password, null: false, default: ""

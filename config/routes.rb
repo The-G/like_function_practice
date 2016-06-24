@@ -1,12 +1,14 @@
 Rails.application.routes.draw do
+
+  # devise_for :admins
+  # # can edit admin routes using below
+  # mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   devise_for :users
-  get 'home/index'
-  root 'home#index'
-  # resources :books do
-  #   put 'like', to: 'books#upvote'
-  #   put 'dislike', to: 'books#downvote'
-  # end
+
+  root 'books#index'
+
   resources :books do
     member do
       put "like", to: "books#upvote"

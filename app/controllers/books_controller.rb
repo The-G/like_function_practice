@@ -2,28 +2,58 @@ class BooksController < ApplicationController
   before_action :authenticate_user!
 
   before_action :set_book, only: [:show, :edit, :update, :destroy, :upvote, :downvote]
+
   def upvote
-      if current_user.voted_for? @book
-        @book = Book.find(params[:id])
-        @book.unliked_by current_user
-      else
-        @book = Book.find(params[:id])
-        @book.liked_by current_user
-      end
-      redirect_to books_path
-    # redirect_to :back
+    @book = Book.find(params[:id])
+    if current_user.voted_up_on? @book
+      @book.unliked_by current_user
+    else
+      @book.liked_by current_user
+    end
+    @book.like_count = @book.get_upvotes.size
+    @book.hate_count = @book.get_downvotes.size
+    @book.save
+
+    @user = current_user
+    new_like_voted = []
+    current_user.find_up_voted_items.each do |voted|
+      new_like_voted << voted.title.to_s
+    end
+    new_hate_voted = []
+    current_user.find_down_voted_items.each do |voted|
+      new_hate_voted << voted.title.to_s
+    end
+    @user.like_array = new_like_voted
+    @user.hate_array = new_hate_voted
+    @user.save
+    redirect_to books_path
   end
 
   def downvote
-    if current_user.voted_for? @book
-      @book = Book.find(params[:id])
+    @book = Book.find(params[:id])
+    if current_user.voted_down_on? @book
       @book.undisliked_by current_user
     else
-      @book = Book.find(params[:id])
       @book.downvote_from current_user
     end
+    @book.like_count = @book.get_upvotes.size
+    @book.hate_count = @book.get_downvotes.size
+    @book.save
+
+    @user = current_user
+    new_like_voted = []
+    current_user.find_up_voted_items.each do |voted|
+      new_like_voted << voted.title.to_s
+    end
+    new_hate_voted = []
+    current_user.find_down_voted_items.each do |voted|
+      new_hate_voted << voted.title.to_s
+    end
+    @user.like_array = new_like_voted
+    @user.hate_array = new_hate_voted
+    @user.save
+
     redirect_to books_path
-    # redirect_to :back
   end
 
   # GET /books
