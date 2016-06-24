@@ -1,0 +1,25 @@
+<p id="notice"><%= notice %></p>
+<h1>Listing Books</h1>
+<% @books.each do |book| %>
+    <div class="col-sm-6 col-md-4">
+
+      <div class="caption">
+        <h3><%= link_to book.title, book %></h3>
+
+        <%= link_to like_book_path(book), class: 'like', method: :put do %>
+            <button type="button" class="btn btn-info" aria-label="Left Align">
+              <span class='glyphicon glyphicon-thumbs-up' aria-hidden='true'></span>
+              <span class='badge'><%= book.get_upvotes.size %></span>
+            </button>
+        <% end %>
+
+        <%= link_to dislike_book_path(book), class: 'like', method: :put do %>
+            <button type="button" class="btn btn-info" aria-label="Left Align">
+              <span class='glyphicon glyphicon-thumbs-down' aria-hidden='true'></span>
+              <span class='badge'><%= book.get_downvotes.size %></span>
+            </button>
+        <% end %>
+
+      </div>
+    </div>
+<% end %>
