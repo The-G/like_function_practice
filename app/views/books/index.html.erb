@@ -6,14 +6,16 @@
       <div class="caption">
         <h3><%= link_to book.title, book %></h3>
 
-        <%= link_to like_book_path(book), class: 'like', method: :put do %>
+        <!--new-->
+        <%= link_to like_book_path(book), class: 'like_up', method: :put, remote: true, data: {type: :json} do %>
             <button type="button" class="btn btn-info" aria-label="Left Align">
               <span class='glyphicon glyphicon-thumbs-up' aria-hidden='true'></span>
               <span class='badge'><%= book.get_upvotes.size %></span>
             </button>
         <% end %>
 
-        <%= link_to dislike_book_path(book), class: 'like', method: :put do %>
+        <!--old-->
+        <%= link_to dislike_book_path(book), class: 'like_down', method: :put do %>
             <button type="button" class="btn btn-info" aria-label="Left Align">
               <span class='glyphicon glyphicon-thumbs-down' aria-hidden='true'></span>
               <span class='badge'><%= book.get_downvotes.size %></span>
@@ -23,13 +25,32 @@
       </div>
 
       <div style="margin: 10px">
-        <%= current_user.find_voted_items%> <br><br>
+        <%= current_user.find_voted_items %> <br><br>
         <%= current_user.find_up_voted_items %> <br><br>
         <%= current_user.find_down_voted_items %> <br><br>
 
-        <% current_user.find_voted_items.each do |voted|%>
-          <%= voted.title%>
+        <% current_user.find_voted_items.each do |voted| %>
+            <%= voted.title %>
         <% end %>
       </div>
     </div>
-<% end  %>
+<% end %>
+
+<script>
+
+  $('.like_up')
+      .on('ajax:send', function () {
+        $(this).addClass('loading');
+      })
+      .on('ajax:complete', function () {
+        $(this).removeClass('loading');
+      })
+      .on('ajax:error', function () {
+        $(this).after('<div class="error">There was an issue.</div>');
+      })
+      .on('ajax:success', function (e, data, status, xhr) {
+//        $(this).html("Thank you for voting!");
+//        $(this).html(data.count);
+        $(this).find("span.badge").html(data.count);
+      });
+</script>

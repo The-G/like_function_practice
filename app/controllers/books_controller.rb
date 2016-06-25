@@ -3,30 +3,32 @@ class BooksController < ApplicationController
 
   before_action :set_book, only: [:show, :edit, :update, :destroy, :upvote, :downvote]
 
+  # def upvote
+  #   @book = Book.find(params[:id])
+  #   respond_to do |format|
+  #     unless current_user.voted_for? @book
+  #       @book.like_count = @book.like_count + 1
+  #       @book.save
+  #       @book.upvote_by current_user
+  #       format.html {redirect_to :back }
+  #       format.json { render json: { count: @book.liked_count } }
+  #       format.js   { render :layout => false }
+  #     else
+  #       flash[:danger] = 'You allready voted this entry'
+  #       format.html { redirect_to :back }
+  #       format.json { head :no_content }
+  #       format.js
+  #     end
+  #   end
+  # end
+
   def upvote
     @book = Book.find(params[:id])
-    if current_user.voted_up_on? @book
-      @book.unliked_by current_user
-    else
-      @book.liked_by current_user
+    @book.upvote_from current_user
+    respond_to do |format|
+      format.html {redirect_to :back }
+      format.json { render json: { count: @book.get_upvotes.size } }
     end
-    @book.like_count = @book.get_upvotes.size
-    @book.hate_count = @book.get_downvotes.size
-    @book.save
-
-    @user = current_user
-    new_like_voted = []
-    current_user.find_up_voted_items.each do |voted|
-      new_like_voted << voted.title.to_s
-    end
-    new_hate_voted = []
-    current_user.find_down_voted_items.each do |voted|
-      new_hate_voted << voted.title.to_s
-    end
-    @user.like_array = new_like_voted
-    @user.hate_array = new_hate_voted
-    @user.save
-    redirect_to books_path
   end
 
   def downvote
